@@ -1,0 +1,4 @@
+这是一个py打包win exe的actions
+需要导入py和依赖
+然后构建action
+会生成exe
