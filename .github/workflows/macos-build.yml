@@ -1,0 +1,40 @@
+name: Build macOS App (M1/M2/M3)
+
+on:
+  workflow_dispatch:  # 手动触发最方便
+  push:
+    branches: [ "main" ]
+
+jobs:
+  build-macos:
+    runs-on: macos-latest   # 使用 ARM macOS runner，适配苹果 M 系列芯片
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.9"  # 可改成你需要的版本
+
+      - name: Install dependencies
+        run: |
+          pip install pyinstaller
+          # 如果你项目有 requirements.txt，也加上：
+          # pip install -r requirements.txt
+
+      - name: Build macOS app
+        run: |
+          pyinstaller --windowed --onefile --name MyApp main.py
+          # 如果你想生成 .app 文件夹结构（不是单独的可执行文件），用：
+          # pyinstaller --windowed --onedir --name MyApp main.py
+
+      - name: Show build output
+        run: ls -R dist
+
+      - name: Upload app artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: macOS-app
+          path: dist/
